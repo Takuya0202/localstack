@@ -59,8 +59,10 @@ LocalStack に関係する操作を行う際は、必要に応じて以下の観
 
 ```
 localstack/
-├── CLAUDE.md        # このファイル (プロジェクト全体のルール)
+├── CLAUDE.md              # このファイル (プロジェクト全体のルール)
 ├── README.md
-└── lambda/          # Lambda + API Gateway + CloudFormation のサブプロジェクト
-    └── CLAUDE.md    # Lambda プロジェクト固有の方針・ドキュメント
+├── lambda-hooks/          # Lambda + API Gateway — LocalStack Init Hooks パターン
+│   └── CLAUDE.md
+└── lambda-container/      # Lambda + API Gateway — 別コンテナ (depends_on) パターン
+    └── CLAUDE.md
 ```

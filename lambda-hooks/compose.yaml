@@ -1,0 +1,23 @@
+services:
+  localstack:
+    container_name: localstack-lambda
+    image: localstack/localstack   # BOILERPLATE: Community版。Lambda+API Gatewayは無料枠で使える
+    ports:
+      - "127.0.0.1:4566:4566"     # CHECKPOINT: すべてのAWS API呼び出しはここに向く
+    environment:
+      - SERVICES=lambda,iam,logs,cloudformation,apigateway
+        # CHECKPOINT: 必要なサービスだけ有効にすることで起動が速くなる
+      - DEBUG=1
+        # BOILERPLATE: ログを詳細出力する。学習中は1のままでよい
+    volumes:
+      - "./localstack_data:/var/lib/localstack"
+        # BOILERPLATE: コンテナ再起動後もデータを保持する
+      - "/var/run/docker.sock:/var/run/docker.sock"
+        # CHECKPOINT: Lambda関数をDockerコンテナで実行するために必須（3.0以降の必須要件）
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+        # BOILERPLATE: LocalStackが起動完了するまでdeploy.shなどが待機できるようにする

@@ -1,4 +1,12 @@
-# Lambda サブプロジェクト — 方針ドキュメント
+# Lambda サブプロジェクト — Init Hooks パターン
+
+## インフラ初期化方式
+
+**LocalStack Init Hooks** を使う。
+`/etc/localstack/init/ready.d/` にマウントしたシェルスクリプトを、LocalStack が起動完了後に自動実行する。
+別コンテナを立てず compose.yaml が1サービスだけで完結するのが特徴。
+
+比較対象 → `lambda-container/`（`depends_on: condition: service_healthy` + 別コンテナ方式）
 
 ## ゴール
 
@@ -25,26 +33,33 @@ Spring Cloud Function (Java / Gradle) を使って「Hello World」を返すだ�
 ## 想定プロジェクト構成 (今後作成予定)
 
 ```text
-lambda/
+lambda-hooks/
 ├── CLAUDE.md           # このファイル
-├── compose.yaml        # LocalStack 起動定義
+├── compose.yaml        # LocalStack 起動定義（1サービスのみ）
+├── init.sh             # LocalStack 起動後に自動実行されるデプロイスクリプト
 ├── template.yaml       # CloudFormation テンプレート
-├── src/                # Spring Boot アプリケーション
-│   ├── build.gradle
-│   └── src/main/java/...
-└── deploy.sh           # ビルド → デプロイ → 動作確認スクリプト
+└── src/                # Spring Boot アプリケーション
+    ├── build.gradle
+    └── src/main/java/...
 ```
+
+`init.sh` は `compose.yaml` の volumes で `/etc/localstack/init/ready.d/init.sh` にマウントする。
 
 ## 各ステップで読むべきドキュメント
 
-### ステップ 1: compose.yaml を書く前に
+### ステップ 1: compose.yaml と init.sh を書く前に
 
 - **URL**: <https://docs.localstack.cloud/getting-started/installation/>
 - **見るべきセクション**: "Docker Compose" のセクション
 - **注目ポイント**:
   - `SERVICES` 環境変数 (有効にするサービスを列挙する)
-  - `healthcheck` の設定 (LocalStack が起動完了するまで待つ仕組み)
-  - `LAMBDA_EXECUTOR` 変数 (学習目的なら `local` で十分)
+  - `healthcheck` の設定 (LocalStack が起動完了した合図)
+
+- **URL**: <https://docs.localstack.cloud/references/init-hooks/>
+- **見るべきセクション**: "Script Stages" と "ready" ステージ
+- **注目ポイント**:
+  - `ready.d/` に置いたスクリプトが起動完了後に自動実行される仕組み
+  - スクリプトの終了コードが 0 以外の場合 LocalStack がエラーを記録する
 
 ### ステップ 2: CloudFormation テンプレートを書く前に
 
@@ -91,12 +106,11 @@ lambda/
 すべての AWS SDK・CLI 呼び出しは `http://localhost:4566` に向ける。
 `awslocal` コマンドを使えばこの指定を自動化できる。
 
-### Lambda Executor モード
+### Lambda 実行モード（LocalStack 3.0 以降）
 
-- `local`: Lambda 関数を LocalStack プロセス内で直接実行。起動が速く学習に向いている
-- `docker`: Lambda 関数を別の Docker コンテナで実行。実際の AWS に近い動作だが重い
-
-学習目的では `local` モードから始めるとよい。
+LocalStack 3.0 以降、`LAMBDA_EXECUTOR` 変数は廃止された。
+Lambda 関数は常に Docker コンテナとして実行される（旧 `docker-reuse` 相当）。
+そのため `compose.yaml` で `/var/run/docker.sock` のマウントが必須。
 
 ### フェイク認証情報
 
