@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Runtime: java21
+    Handler: org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest
+    Timeout : 30
+    MemorySize : 512
+
+Resources:
+  HelloWorldFunctions:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: hello-world
+      CodeUri: s3://lambda-hooks-bucket/lambda-hooks.jar
+      Environment:
+        Variables:
+          SPRING_CLOUD_FUNCTION_DEFINITION: helloWorldFunction
+      Events:
+        HelloApi:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
