@@ -47,7 +47,7 @@ lambda-hooks/
 
 ## 各ステップで読むべきドキュメント
 
-### ステップ 1: compose.yaml と init.sh を書く前に
+### ステップ 1: compose.yaml と Init Hooks の設定 ✅
 
 - **URL**: <https://docs.localstack.cloud/getting-started/installation/>
 - **見るべきセクション**: "Docker Compose" のセクション
@@ -61,21 +61,7 @@ lambda-hooks/
   - `ready.d/` に置いたスクリプトが起動完了後に自動実行される仕組み
   - スクリプトの終了コードが 0 以外の場合 LocalStack がエラーを記録する
 
-### ステップ 2: CloudFormation テンプレートを書く前に
-
-- **URL**: <https://docs.localstack.cloud/user-guide/aws/cloudformation/>
-- **見るべきセクション**: "Supported Resource Types"
-- **注目ポイント**: どのリソースタイプが使えるか (Lambda・API Gateway が含まれているか確認)
-
-### ステップ 3: Lambda の設定をする前に
-
-- **URL**: <https://docs.localstack.cloud/user-guide/aws/lambda/>
-- **見るべきセクション**: "Configuration" と "Supported Runtimes"
-- **注目ポイント**:
-  - `LAMBDA_EXECUTOR` の各モード (`local` / `docker`) の違い
-  - Java ランタイムのサポート状況
-
-### ステップ 4: Spring Cloud Function のコードを書く前に
+### ステップ 2: Spring Cloud Function のコードを書く前に
 
 - **URL**: <https://docs.spring.io/spring-cloud-function/docs/current/reference/html/aws.html>
 - **見るべきセクション**: "Getting Started" と "FunctionInvoker"
@@ -83,7 +69,17 @@ lambda-hooks/
   - `FunctionInvoker` — CloudFormation の `Handler` フィールドに指定するクラス
   - Gradle の依存関係 (`spring-cloud-function-adapter-aws`)
 
-### ステップ 5: AWS CLI でデプロイする前に
+### ステップ 3: CloudFormation テンプレートを書く前に
+
+- **URL**: <https://docs.localstack.cloud/user-guide/aws/cloudformation/>
+- **見るべきセクション**: "Supported Resource Types"
+- **注目ポイント**: どのリソースタイプが使えるか (Lambda・API Gateway が含まれているか確認)
+
+- **URL**: <https://docs.localstack.cloud/user-guide/aws/lambda/>
+- **見るべきセクション**: "Supported Runtimes"
+- **注目ポイント**: Java ランタイムのサポート状況
+
+### ステップ 4: init.sh を書く前に (AWS CLI でデプロイ)
 
 - **URL**: <https://docs.localstack.cloud/user-guide/integrations/aws-cli/>
 - **見るべきセクション**: "awslocal" のセクション
@@ -91,7 +87,7 @@ lambda-hooks/
   - `awslocal` ラッパーとは何か (`--endpoint-url http://localhost:4566` を自動付与する)
   - 通常の `aws` コマンドとの違い
 
-### ステップ 6: API Gateway 経由で呼び出す前に
+### ステップ 5: API Gateway 経由で呼び出す前に
 
 - **URL**: <https://docs.localstack.cloud/user-guide/aws/api-gateway/>
 - **見るべきセクション**: "Invoking the API"

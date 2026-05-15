@@ -14,10 +14,5 @@ services:
         # BOILERPLATE: コンテナ再起動後もデータを保持する
       - "/var/run/docker.sock:/var/run/docker.sock"
         # CHECKPOINT: Lambda関数をDockerコンテナで実行するために必須（3.0以降の必須要件）
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
-        # BOILERPLATE: LocalStackが起動完了するまでdeploy.shなどが待機できるようにする
+      - "./init.sh:/etc/localstack/init/ready.d/init.sh"
+        # CHECKPOINT: Init Hooksの本体。LocalStack起動完了後にこのスクリプトが自動実行される
