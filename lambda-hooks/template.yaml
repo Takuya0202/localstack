@@ -1,18 +1,31 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 
+# CHECKPOINT: Env パラメータで環境を切り替える。デプロイ時に --parameter-overrides Env=dev などを渡す
+Parameters:
+  Env:
+    Type: String
+    Default: local
+    AllowedValues: [local, dev, stg, prod]
+
 Globals:
   Function:
     Runtime: java21
     Handler: org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest
-    Timeout : 30
-    MemorySize : 512
+    Timeout: 30
+    MemorySize: 512
 
 Resources:
+  HelloWorldApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+
   HelloWorldFunctions:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: hello-world
+      # CHECKPOINT: !Sub で Env を埋め込み、環境ごとに別の Lambda 関数として識別できるようにする
+      FunctionName: !Sub "hello-world-${Env}"
       CodeUri: s3://lambda-hooks-bucket/lambda-hooks.jar
       Environment:
         Variables:
@@ -21,5 +34,13 @@ Resources:
         HelloApi:
           Type: Api
           Properties:
+            # CHECKPOINT: 明示的に定義した API を参照する
+            RestApiId: !Ref HelloWorldApi
             Path: /hello
             Method: get
+
+# CHECKPOINT: Outputs に出すことで、デプロイ後に describe-stacks で API ID を取得できる
+Outputs:
+  ApiId:
+    Value: !Ref HelloWorldApi
+    Description: API Gateway REST API ID

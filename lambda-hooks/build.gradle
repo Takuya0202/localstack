@@ -51,6 +51,10 @@ shadowJar {
 	}
 	// BOILERPLATE: META-INF/services を正しくマージするために必要
 	mergeServiceFiles()
+	// GOTCHA: Spring Boot 3.x の自動設定ファイルは mergeServiceFiles() では処理されない
+	//         複数 JAR の内容を append で連結しないと Spring Cloud Function の設定が消える
+	append 'META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports'
+	append 'META-INF/spring.factories'
 }
 
 // BOILERPLATE: gradle build で自動的に shadowJar も実行されるようにする
