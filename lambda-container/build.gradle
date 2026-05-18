@@ -38,7 +38,7 @@ dependencyManagement {
 shadowJar {
     archiveClassifier = 'aws'
     manifest {
-        attributes 'Main-Class': 'com.example.demo.DemoApplication'
+        attributes 'Main-Class': 'com.example.lambda_container.LambdaContainerApplication'
     }
     mergeServiceFiles()
     append 'META-INF/spring.handlers'

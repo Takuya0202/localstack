@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Env:
+    Type: String
+    Default: local
+    AllowedValues: [local, dev, stg, prod]
+
+Globals:
+  Function:
+    Runtime: java21
+    Handler: org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest
+    Timeout: 30
+    MemorySize: 512
+
+Resources:
+  HelloWorldApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+
+  HelloWorldFunctions:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "hello-spring-${Env}"
+      CodeUri: build/libs/lambda-container-0.0.1-SNAPSHOT-aws.jar
+      Environment:
+        Variables:
+          SPRING_CLOUD_FUNCTION_DEFINITION: helloSpringFunction
+      Events:
+        HelloApi:
+          Type: Api
+          Properties:
+            # CHECKPOINT: 明示的に定義した API を参照する
+            RestApiId: !Ref HelloWorldApi
+            Path: /hello
+            Method: get
