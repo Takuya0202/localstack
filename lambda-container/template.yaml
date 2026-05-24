@@ -36,3 +36,9 @@ Resources:
             RestApiId: !Ref HelloWorldApi
             Path: /hello
             Method: get
+
+# CHECKPOINT: Outputs に出すことで、デプロイ後に sam list stack-outputs で API ID を取得できる
+Outputs:
+  ApiId:
+    Value: !Ref HelloWorldApi
+    Description: API Gateway REST API ID

@@ -1,1 +1,13 @@
 FROM openjdk:21
+
+RUN apt-get update && \
+  apt-get install -y curl unzip && \
+  rm -rf /var/lib/apt/lists/*
+
+# CHECKPOINT: SAM CLI 公式バイナリを GitHub からインストール
+#             Python 不要の自己完結バイナリ
+RUN curl -Lo /tmp/sam.zip \
+  https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip && \
+  unzip /tmp/sam.zip -d /tmp/sam-installation && \
+  /tmp/sam-installation/install && \
+  rm -rf /tmp/sam.zip /tmp/sam-installation
