@@ -19,11 +19,13 @@ sam deploy \
   --no-confirm-changeset \
   --no-fail-on-empty-changeset
 
-# BOILERPLATE: スタックの Outputs を表示。ApiId がここに出るので URL を組み立てる
-echo ">>> Stack outputs:"
-sam list stack-outputs --stack-name lambda-container-stack-local
-
 # GOTCHA: LocalStack の API Gateway URL は通常の AWS と異なり _user_request_ セグメントが入る
-echo ">>> API URL pattern: http://localhost:4566/restapis/{ApiId}/Prod/_user_request_/hello"
+#         sam list stack-outputs は LocalStack との互換性問題が出やすいため aws コマンドで直接取得する
+API_ID=$(aws cloudformation describe-stacks \
+  --stack-name lambda-container-stack-local \
+  --query "Stacks[0].Outputs[?OutputKey=='ApiId'].OutputValue" \
+  --output text)
+
+echo ">>> curl http://localhost:4566/restapis/${API_ID}/Prod/_user_request_/hello"
 
 echo ">>> Done"

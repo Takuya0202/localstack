@@ -20,6 +20,7 @@ services:
       start_period: 30s
 
   init:
+    container_name: init-lambda-container
     build:
       context: .
       dockerfile: setup/Dockerfile.init

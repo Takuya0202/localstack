@@ -45,10 +45,7 @@ shadowJar {
     append 'META-INF/spring.schemas'
     append 'META-INF/spring.tooling'
     append 'META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports'
-    transform(PropertiesFileTransformer) {
-        paths = ['META-INF/spring.factories']
-        mergeStrategy = "append"
-    }
+    append 'META-INF/spring.factories'
 }
 
 tasks.named('test') {
