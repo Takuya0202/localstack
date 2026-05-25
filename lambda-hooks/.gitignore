@@ -1,3 +1,4 @@
 .gradle
 build
 localstack_data
+bin
