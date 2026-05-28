@@ -18,7 +18,7 @@ Resources:
   HelloWorldApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: Prod
+      StageName: !Ref Env
 
   HelloWorldFunctions:
     Type: AWS::Serverless::Function
@@ -35,3 +35,7 @@ Resources:
             RestApiId: !Ref HelloWorldApi
             Path: /hello
             Method: get
+
+Outputs:
+  ApiId:
+    Value: !Ref HelloWorldApi

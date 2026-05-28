@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class HelloSpringFunction implements Function<String, Map<String, String>> {
     @Override
     public Map<String, String> apply(String input) {
-        return Map.of("message", "Hello , Spring");
+        return Map.of("message", "Hello , Spring!!!");
     }
 
 }
